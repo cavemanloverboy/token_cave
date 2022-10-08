@@ -3,7 +3,7 @@ seeds = true
 skip-lint = false
 
 [programs.localnet]
-token_cave = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+token_cave_tunnel = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
 
 [registry]
 url = "https://api.apr.dev"
