@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+// declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"); // localnet address
+declare_id!("3qorDuyoaU3mwhVZcP4F6nv3Lhshrc56rSy2VjwSwbJn"); // testnet address
 
 pub mod instructions;
 pub mod error;
