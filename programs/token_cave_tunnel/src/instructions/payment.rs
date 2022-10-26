@@ -4,7 +4,7 @@ use anchor_spl::token::{TokenAccount, Token, Mint};
 pub const CAVE_TUNNEL_INFO_SIZE: usize = 8 + core::mem::size_of::<CaveTunnelInfo>();
 
 // Delay period before receiving payment
-pub const TIMELOCK_DURATION: usize = 10;
+pub const TIMELOCK_DURATION: usize = 5;
 
 pub const COST_OF_SERVICE_PER_SECOND: u64 = 1_000_000;
 
