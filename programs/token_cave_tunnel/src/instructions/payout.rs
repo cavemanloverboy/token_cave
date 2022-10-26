@@ -75,8 +75,9 @@ pub struct Payout<'info> {
 
     #[account()]
     pub mint: Account<'info, Mint>,
-
-    #[account(/* NOTE: this would have to be checked but is not checked here */)]
+    
+    /// NOTE: this would have to be checked but is not checked here
+    #[account(mut)]
     pub placeholder_for_threshold_signature: Signer<'info>,
 
     #[account(
