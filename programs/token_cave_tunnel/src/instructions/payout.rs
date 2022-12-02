@@ -1,14 +1,14 @@
-use anchor_lang::prelude::*;
-use anchor_spl::token::{TokenAccount, Token, Mint};
 use super::payment::CaveTunnelInfo;
 use crate::{error::TokenCaveError, instructions::payment::TIMELOCK_DURATION};
+use anchor_lang::prelude::*;
+use anchor_spl::token::{Mint, Token, TokenAccount};
 
-pub fn handler(
-    ctx: Context<Payout>,
-) -> Result<()> {
-
+pub fn handler(ctx: Context<Payout>) -> Result<()> {
     // Check that the timelock is up
-    let earliest_withdraw_time = ctx.accounts.cave_tunnel_info.payment_time
+    let earliest_withdraw_time = ctx
+        .accounts
+        .cave_tunnel_info
+        .payment_time
         .checked_add(TIMELOCK_DURATION.try_into().expect("small usize to i64"))
         .expect("integer overflow on time addition");
     require_gt!(
@@ -16,7 +16,6 @@ pub fn handler(
         earliest_withdraw_time,
         TokenCaveError::LockIsActive,
     );
-
 
     // Withdraw spl token from the token cave
     anchor_spl::token::transfer(
@@ -27,32 +26,33 @@ pub fn handler(
                 to: ctx.accounts.payee_token_account.to_account_info(),
                 authority: ctx.accounts.cave_tunnel_info.to_account_info(),
             },
-            &[&[&ctx.accounts.cave_tunnel.key().to_bytes(), &[*ctx.bumps.get("cave_tunnel_info").unwrap()]]]
+            &[&[
+                &ctx.accounts.cave_tunnel.key().to_bytes(),
+                &[*ctx.bumps.get("cave_tunnel_info").unwrap()],
+            ]],
         ),
         ctx.accounts.cave_tunnel.amount,
     )?;
 
-    anchor_spl::token::close_account(
-        CpiContext::new_with_signer(
-            ctx.accounts.token_program.to_account_info(),
-            anchor_spl::token::CloseAccount {
-                account: ctx.accounts.cave_tunnel.to_account_info(),
-                destination: ctx.accounts.payee_token_account.to_account_info(),
-                authority: ctx.accounts.cave_tunnel_info.to_account_info(),
-            },
-            &[&[&ctx.accounts.cave_tunnel.key().to_bytes(), &[*ctx.bumps.get("cave_tunnel_info").unwrap()]]]
-        ),
-    )?;
-
+    anchor_spl::token::close_account(CpiContext::new_with_signer(
+        ctx.accounts.token_program.to_account_info(),
+        anchor_spl::token::CloseAccount {
+            account: ctx.accounts.cave_tunnel.to_account_info(),
+            destination: ctx.accounts.payee_token_account.to_account_info(),
+            authority: ctx.accounts.cave_tunnel_info.to_account_info(),
+        },
+        &[&[
+            &ctx.accounts.cave_tunnel.key().to_bytes(),
+            &[*ctx.bumps.get("cave_tunnel_info").unwrap()],
+        ]],
+    ))?;
 
     Ok(())
 }
 
-
 #[derive(Accounts)]
 #[instruction(payee_pubkey: Pubkey)]
 pub struct Payout<'info> {
-
     /// The token cave tunnel! A program-owned spl token account
     /// which supports payment with a time-locked payout.
     #[account(
@@ -75,9 +75,9 @@ pub struct Payout<'info> {
 
     #[account()]
     pub mint: Account<'info, Mint>,
-    
+
     /// NOTE: this would have to be checked but is not checked here
-    #[account(mut)]
+    #[account()]
     pub placeholder_for_threshold_signature: Signer<'info>,
 
     #[account(
@@ -98,5 +98,4 @@ pub struct Payout<'info> {
     pub payee_token_account: Account<'info, TokenAccount>,
 
     pub token_program: Program<'info, Token>,
-
 }

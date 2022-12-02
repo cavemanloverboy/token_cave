@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::{TokenAccount, Token, Mint};
+use anchor_spl::token::{Mint, Token, TokenAccount};
 
 pub const CAVE_TUNNEL_INFO_SIZE: usize = 8 + core::mem::size_of::<CaveTunnelInfo>();
 
@@ -8,11 +8,7 @@ pub const TIMELOCK_DURATION: usize = 5;
 
 pub const COST_OF_SERVICE_PER_SECOND: u64 = 1_000_000;
 
-pub fn handler(
-    ctx: Context<Payment>,
-    service_time: u32,
-) -> Result<()> {
-
+pub fn handler(ctx: Context<Payment>, service_time: u32) -> Result<()> {
     // Store payer, and payment time. Initialize payee to default
     ctx.accounts.cave_tunnel_info.payer = ctx.accounts.payer.key();
     ctx.accounts.cave_tunnel_info.payment_time = Clock::get()?.unix_timestamp;
@@ -32,10 +28,8 @@ pub fn handler(
     )
 }
 
-
 #[derive(Accounts)]
 pub struct Payment<'info> {
-
     /// The token cave tunnel! A program-owned spl token account
     /// which supports payment with a time-locked payout.
     #[account(
@@ -79,7 +73,6 @@ pub struct Payment<'info> {
 
 #[account]
 pub struct CaveTunnelInfo {
-
     /// Payer
     pub payer: Pubkey,
 
@@ -88,5 +81,4 @@ pub struct CaveTunnelInfo {
 
     /// Duration of service
     pub service_time: u32,
-    
 }

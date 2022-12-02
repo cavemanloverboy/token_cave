@@ -1,13 +1,10 @@
-use anchor_lang::prelude::*;
-use anchor_spl::token::{TokenAccount, Mint};
 use crate::error::TokenCaveError;
+use anchor_lang::prelude::*;
+use anchor_spl::token::{Mint, TokenAccount};
 
 use super::initialize::CaveInfo;
 
-pub fn handler(
-    ctx: Context<Unlock>,
-) -> Result<()> {
-
+pub fn handler(ctx: Context<Unlock>) -> Result<()> {
     // Check that this is the depositor
     require_keys_eq!(
         ctx.accounts.cave_info.depositor,
@@ -29,11 +26,8 @@ pub fn handler(
     Ok(())
 }
 
-
-
 #[derive(Accounts)]
 pub struct Unlock<'info> {
-
     /// The token cave! A program-owned spl token account
     /// which supports deposits and time-locked withdraws.
     /// The time-locked withdraw can be aborted, which sends
@@ -65,5 +59,4 @@ pub struct Unlock<'info> {
     /// inside of this token account.
     #[account(mut)]
     pub depositor_token_account: Account<'info, TokenAccount>,
-
 }

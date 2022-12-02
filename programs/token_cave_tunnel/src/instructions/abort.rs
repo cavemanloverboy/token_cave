@@ -1,16 +1,13 @@
-use anchor_lang::prelude::*;
-use anchor_spl::token::{TokenAccount, Token, Mint};
 use super::initialize::CaveInfo;
 use crate::error::TokenCaveError;
+use anchor_lang::prelude::*;
+use anchor_spl::token::{Mint, Token, TokenAccount};
 
-pub fn handler(
-    ctx: Context<Abort>,
-) -> Result<()> {
-
+pub fn handler(ctx: Context<Abort>) -> Result<()> {
     // Check that this is the depositor and the backup account
     require!(
         ctx.accounts.depositor.key() == ctx.accounts.cave_info.depositor
-        && ctx.accounts.cave_info.is_backup(&ctx.accounts.backup),
+            && ctx.accounts.cave_info.is_backup(&ctx.accounts.backup),
         TokenCaveError::Unauthorized,
     );
 
@@ -41,31 +38,32 @@ pub fn handler(
                 to: ctx.accounts.backup_spl_account.to_account_info(),
                 authority: ctx.accounts.cave_info.to_account_info(),
             },
-            &[&[ctx.accounts.cave.key().as_ref(), &[*ctx.bumps.get("cave_info").unwrap()]]]
+            &[&[
+                ctx.accounts.cave.key().as_ref(),
+                &[*ctx.bumps.get("cave_info").unwrap()],
+            ]],
         ),
         ctx.accounts.cave.amount,
     )?;
 
-    anchor_spl::token::close_account(
-        CpiContext::new_with_signer(
-            ctx.accounts.token_program.to_account_info(),
-            anchor_spl::token::CloseAccount {
-                account: ctx.accounts.cave.to_account_info(),
-                destination: ctx.accounts.backup_spl_account.to_account_info(),
-                authority: ctx.accounts.cave_info.to_account_info(),
-            },
-            &[&[&ctx.accounts.cave.key().to_bytes(), &[*ctx.bumps.get("cave_info").unwrap()]]]
-        ),
-    )?;
-
+    anchor_spl::token::close_account(CpiContext::new_with_signer(
+        ctx.accounts.token_program.to_account_info(),
+        anchor_spl::token::CloseAccount {
+            account: ctx.accounts.cave.to_account_info(),
+            destination: ctx.accounts.backup_spl_account.to_account_info(),
+            authority: ctx.accounts.cave_info.to_account_info(),
+        },
+        &[&[
+            &ctx.accounts.cave.key().to_bytes(),
+            &[*ctx.bumps.get("cave_info").unwrap()],
+        ]],
+    ))?;
 
     Ok(())
 }
 
-
 #[derive(Accounts)]
 pub struct Abort<'info> {
-
     /// The token cave! A program-owned spl token account
     /// which supports deposits and time-locked withdraws.
     /// The time-locked withdraw can be aborted, which sends
@@ -104,5 +102,4 @@ pub struct Abort<'info> {
     pub backup_spl_account: Account<'info, TokenAccount>,
 
     pub token_program: Program<'info, Token>,
-
 }

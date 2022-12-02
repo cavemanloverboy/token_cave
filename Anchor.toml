@@ -9,8 +9,8 @@ token_cave_tunnel = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
-wallet = "./devkey.json"
+cluster = "testnet"
+wallet = "./dev_key.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

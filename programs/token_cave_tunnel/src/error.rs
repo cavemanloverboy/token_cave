@@ -2,7 +2,6 @@ use anchor_lang::prelude::*;
 
 #[error_code]
 pub enum TokenCaveError {
-
     #[msg("Depositor did not request unlock")]
     DidNotRequestUnlock,
 
@@ -20,5 +19,4 @@ pub enum TokenCaveError {
 
     #[msg("You supplied a token account that does not belong to the backup address")]
     IncorrectBackupTokenAccount,
-
 }
